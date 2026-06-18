@@ -153,7 +153,7 @@ export function exportMokf(bundle: Bundle, exportedAt: string): Archive {
   const titleByKey = new Map<string, string>();
 
   interface C { key: string; path: string; file: string; fm: Record<string, FmValue>; body: string;
-    title: string; description: string; childKeys: string[]; refKeys: string[]; }
+    title: string; description: string; isContent: boolean; childKeys: string[]; refKeys: string[]; }
   const collected: C[] = [];
 
   const walk = (key: string, parentPath: string, seen: Set<string>): void => {
@@ -182,7 +182,7 @@ export function exportMokf(bundle: Bundle, exportedAt: string): Archive {
     }
     titleByKey.set(key, title);
 
-    collected.push({ key, path, file: `${path}.md`, fm, body, title, description,
+    collected.push({ key, path, file: `${path}.md`, fm, body, title, description, isContent,
       childKeys: kids.map(e => e.child), refKeys: childrenOf(key, "reference").map(r => r.child) });
 
     manifestNodes.push({ nodeKey: node.key, slug: node.slug, path, type: node.type,
@@ -197,6 +197,13 @@ export function exportMokf(bundle: Bundle, exportedAt: string): Archive {
   // emit pass — all paths known, so body relationship links + listings resolve.
   for (const c of collected) {
     let body = c.body;
+    // A structural folder (no backing concept) gets a readable body — its title
+    // as a heading + its description — so the .md isn't just a bare metadata
+    // table. Derived from frontmatter, so it's stripped on import (round-trip).
+    if (!c.isContent) {
+      body = `# ${c.title}`;
+      if (c.description) body += `\n\n${c.description}`;
+    }
     const refLinks = c.refKeys.map(rk => ({ t: titleByKey.get(rk) || rk, p: pathByKey.get(rk) }))
       .filter(x => x.p).map(x => `- [${x.t}](/${x.p}.md)`);
     if (refLinks.length) body = `${body}${body ? "\n\n" : ""}# Related\n${refLinks.join("\n")}`;
