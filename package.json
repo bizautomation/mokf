@@ -1,0 +1,14 @@
+{
+  "name": "mokf",
+  "version": "0.1.0",
+  "description": "MOKF — a round-trippable profile of the Open Knowledge Format (OKF v0.1).",
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": { ".": "./reference/mokf.ts" },
+  "scripts": {
+    "test": "tsx reference/roundtrip.test.ts",
+    "sample": "tsx reference/gen-sample.ts"
+  },
+  "keywords": ["okf", "open-knowledge-format", "knowledge", "markdown", "bundle", "muninn"],
+  "devDependencies": { "tsx": "^4.0.0" }
+}
