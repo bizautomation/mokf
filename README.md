@@ -33,40 +33,75 @@ compatibility.
 | [`spec/SPEC.md`](spec/SPEC.md) | The MOKF profile spec: archive shape, frontmatter, the `manifest.json` extension, conformance. |
 | [`reference/mokf.ts`](reference/mokf.ts) | A standalone, **zero-dependency** reference implementation: `exportMokf`, `importMokf`, `roundTrip`. |
 | [`reference/roundtrip.test.ts`](reference/roundtrip.test.ts) | The conformance gate: export → import → render must be byte-identical. |
-| [`samples/ai-book.mokf/`](samples/ai-book.mokf/) | A real exported bundle you can browse — concept files, per-directory `index.md` listings, `# Related` links, `manifest.json`. |
+| [`samples/three-laws.mokf/`](samples/three-laws.mokf/) | A browsable example bundle — Asimov's Laws of Robotics — showing concept files, per-directory `index.md` listings, preserved **order**, a `# Related` cross-link, and `manifest.json`. |
 
 ## The format in 30 seconds
 
+A bundle of Asimov's Laws of Robotics — an **ordered** set with one **cross-link**
+(the Zeroth Law supersedes the First): the two things MOKF adds to OKF.
+
 ```
-ai-book.mokf/
+three-laws.mokf/
   index.md                          # OKF listing + okf_version: "0.1"  (no concept frontmatter)
   manifest.json                     # the MOKF extension: order + edges
-  ai-book.md                        # a concept file (type: bundle)
-  ai-book/
+  three-laws.md                     # a concept file (type: bundle)
+  three-laws/
     index.md                        # listing of this dir's children
-    part-1.md                       # type: section  (its title lives here)
-    part-1/
-      what-held-the-pen.md          # type: record + the body + a `# Related` link
-      what-held-the-pen/
-        text.md                     # type: text
+    laws.md                         # type: section  (its title lives here)
+    laws/
+      index.md                      # Zeroth → First → Second → Third  (ORDER, not alphabetical)
+      zeroth-law.md                 # type: law + body + a `# Related` link → first-law.md
+      first-law.md
+      first-law/
+        examples.md                 # a concept can own children
+      second-law.md
+      third-law.md
 ```
 
 - **Every node is a concept file `<slug>.md`** with OKF frontmatter (`type`
   required; `title`/`description`/`resource`/`tags`/`timestamp` recommended).
   Its children live in the **sibling `<slug>/` directory**.
 - **`index.md`** is a listing only (no concept frontmatter), in every directory —
-  OKF progressive disclosure.
+  OKF progressive disclosure. Its order comes from the manifest (the laws are
+  numbered, not alphabetical).
 - **Relationships** (cross-links) are real Markdown links in the body, under a
   `# Related` heading — *and* in `manifest.json` (so a MOKF consumer recovers the
   exact edge, and order, without prose-parsing).
 
 See [`spec/SPEC.md`](spec/SPEC.md) for the normative detail.
 
+## Producing MOKF
+
+The reference implementation operates on a plain in-memory model — `Node` +
+`Edge` + `Concept` — so any system with that shape can emit MOKF in a few lines:
+
+```ts
+import { exportMokf } from "./reference/mokf.js";
+
+const archive = exportMokf({
+  rootKey: "root",
+  nodes: [
+    { key: "root", slug: "my-bundle", type: "bundle" },
+    { key: "a",    slug: "intro", type: "note", conceptId: "c1" },
+  ],
+  edges: [{ parent: "root", child: "a", position: 1000, relation: "contains" }],
+  concepts: { c1: { id: "c1", text: "Intro\n\nThe first note.", tags: ["demo"] } },
+  folderMeta: { root: { title: "My Bundle", description: "An example." } },
+}, new Date().toISOString());
+
+// archive.files: { "<path>": "<contents>" } — write to disk, or zip into a .mokf
+// archive.manifest: the order + edge backbone
+```
+
+`importMokf(archive, now)` reverses it; `roundTrip(bundle)` proves the two are
+byte-identical. See [`reference/sample.ts`](reference/sample.ts) for the full
+example bundle.
+
 ## Run the conformance gate
 
 ```bash
 npx tsx reference/roundtrip.test.ts     # asserts byte-identical round-trip + OKF shape
-npx tsx reference/gen-sample.ts         # regenerates samples/ai-book.mokf/
+npx tsx reference/gen-sample.ts         # regenerates samples/three-laws.mokf/
 ```
 
 The reference implementation has **no dependencies** — it operates on a plain

@@ -1,0 +1,118 @@
+{
+  "mokf_version": "0.1",
+  "okf_version": "0.1",
+  "exportedAt": "2026-06-19T00:00:00.000Z",
+  "root": {
+    "slug": "three-laws",
+    "nodeKey": "n:root"
+  },
+  "nodes": [
+    {
+      "nodeKey": "n:root",
+      "slug": "three-laws",
+      "path": "three-laws",
+      "type": "bundle",
+      "status": null,
+      "conceptId": null,
+      "file": "three-laws.md"
+    },
+    {
+      "nodeKey": "n:laws",
+      "slug": "laws",
+      "path": "three-laws/laws",
+      "type": "section",
+      "status": null,
+      "conceptId": null,
+      "file": "three-laws/laws.md"
+    },
+    {
+      "nodeKey": "n:l0",
+      "slug": "zeroth-law",
+      "path": "three-laws/laws/zeroth-law",
+      "type": "law",
+      "status": null,
+      "conceptId": "c:l0",
+      "file": "three-laws/laws/zeroth-law.md"
+    },
+    {
+      "nodeKey": "n:l1",
+      "slug": "first-law",
+      "path": "three-laws/laws/first-law",
+      "type": "law",
+      "status": null,
+      "conceptId": "c:l1",
+      "file": "three-laws/laws/first-law.md"
+    },
+    {
+      "nodeKey": "n:l1ex",
+      "slug": "examples",
+      "path": "three-laws/laws/first-law/examples",
+      "type": "note",
+      "status": null,
+      "conceptId": "c:l1ex",
+      "file": "three-laws/laws/first-law/examples.md"
+    },
+    {
+      "nodeKey": "n:l2",
+      "slug": "second-law",
+      "path": "three-laws/laws/second-law",
+      "type": "law",
+      "status": null,
+      "conceptId": "c:l2",
+      "file": "three-laws/laws/second-law.md"
+    },
+    {
+      "nodeKey": "n:l3",
+      "slug": "third-law",
+      "path": "three-laws/laws/third-law",
+      "type": "law",
+      "status": null,
+      "conceptId": "c:l3",
+      "file": "three-laws/laws/third-law.md"
+    }
+  ],
+  "edges": [
+    {
+      "parent": "n:root",
+      "child": "n:laws",
+      "position": 1000,
+      "relation": "contains"
+    },
+    {
+      "parent": "n:laws",
+      "child": "n:l0",
+      "position": 1000,
+      "relation": "contains"
+    },
+    {
+      "parent": "n:laws",
+      "child": "n:l1",
+      "position": 2000,
+      "relation": "contains"
+    },
+    {
+      "parent": "n:laws",
+      "child": "n:l2",
+      "position": 3000,
+      "relation": "contains"
+    },
+    {
+      "parent": "n:laws",
+      "child": "n:l3",
+      "position": 4000,
+      "relation": "contains"
+    },
+    {
+      "parent": "n:l0",
+      "child": "n:l1",
+      "position": 1000,
+      "relation": "reference"
+    },
+    {
+      "parent": "n:l1",
+      "child": "n:l1ex",
+      "position": 1000,
+      "relation": "contains"
+    }
+  ]
+}
